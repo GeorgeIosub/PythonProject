@@ -51,7 +51,7 @@ def recompose_file(number_of_files, number_of_files_to_merge):
         except IOError as err:
             print('error ', err.errno, ',', err.strerror)
             if err.errno == errno.EACCES:
-                print(file_to_merge_into_name, 'no perms')
+                print(file_to_merge_into_name, 'no permissions')
             elif err.errno == errno.EISDIR:
                 print(file_to_merge_into_name, 'is directory')
 
