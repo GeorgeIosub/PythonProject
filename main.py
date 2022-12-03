@@ -1,3 +1,4 @@
+import errno
 import random
 from os import path
 
@@ -31,17 +32,28 @@ def recompose_file(number_of_files, number_of_files_to_merge):
     file_to_merge_into_name = 'file{}.secret.txt'.format(file_to_merge_into_index)
     print("Main file: ", file_to_merge_into_name)
     if path.exists(file_to_merge_into_name):
-        with open(file_to_merge_into_name, 'a') as file:
-            for i in range(2, number_of_files_to_merge + 1):
-                index = random.randint(1, number_of_files)
-                file_path = 'file{}.secret.txt'.format(index)
-                if path.exists(file_path):
-                    print("Merged file: ", file_path)
-                    with open(file_path, "r") as info_file:
-                        file.write(info_file.read())
-                else:
-                    print("The file doesn't exist")
-    else:
+        try:
+            with open(file_to_merge_into_name, 'a') as file:
+                for i in range(2, number_of_files_to_merge + 1):
+                    index = random.randint(1, number_of_files)
+                    file_path = 'file{}.secret.txt'.format(index)
+                    try:
+                        print("Merged file: ", file_path)
+                        with open(file_path, "r") as info_file:
+                            file.write(info_file.read())
+                    except IOError as err:
+                        if err.errno == errno.ENOENT:
+                            print(file_path, '- does not exist')
+                        elif err.errno == errno.EACCES:
+                            print(file_path, '- cannot be read')
+                        else:
+                            print(file_path, '- some other error')
+        except IOError as err:
+            print('error ', err.errno, ',', err.strerror)
+            if err.errno == errno.EACCES:
+                print(file_to_merge_into_name, 'no perms')
+            elif err.errno == errno.EISDIR:
+                print(file_to_merge_into_name, 'is directory')
         print("The file doesn't exist")
 
 
