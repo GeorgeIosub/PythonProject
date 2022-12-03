@@ -54,7 +54,6 @@ def recompose_file(number_of_files, number_of_files_to_merge):
                 print(file_to_merge_into_name, 'no perms')
             elif err.errno == errno.EISDIR:
                 print(file_to_merge_into_name, 'is directory')
-        print("The file doesn't exist")
 
 
 split_file('secret.txt', 5)
