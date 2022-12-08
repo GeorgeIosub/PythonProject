@@ -4,28 +4,24 @@ from os import path
 
 
 def split_file(file_path, number_of_files):
-    lines_per_file = 25
     splitfile = None
     file_counter = 1
     with open(file_path) as main_file:
         file_number_of_lines = len(main_file.readlines())
     main_file.close()
+    lines_per_file = file_number_of_lines // number_of_files + 1
     try:
         with open(file_path) as main_file:
-            if lines_per_file * number_of_files >= file_number_of_lines:
-                for counter, line in enumerate(main_file):
-                    if counter % lines_per_file == 0:
-                        if splitfile:
-                            splitfile.close()
-                        splitfile_name = 'file{}.secret.txt'.format(file_counter)
-                        file_counter += 1
-                        splitfile = open(splitfile_name, "w")
-                    splitfile.write(line)
-                if splitfile:
-                    splitfile.close()
-            else:
-                print("The secret-file's data can't be put in {} files".format(number_of_files))
-                return 0
+            for counter, line in enumerate(main_file):
+                if counter % lines_per_file == 0:
+                    if splitfile:
+                        splitfile.close()
+                    splitfile_name = 'file{}.secret.txt'.format(file_counter)
+                    file_counter += 1
+                    splitfile = open(splitfile_name, "w")
+                splitfile.write(line)
+            if splitfile:
+                splitfile.close()
     except IOError as err:
         if err.errno == errno.ENOENT:
             print(file_path, '- does not exist')
@@ -64,5 +60,6 @@ def recompose_file(number_of_files, number_of_files_to_merge):
                 print(file_to_merge_into_name, 'is directory')
 
 
-split_file('secret.txt', 5)
-recompose_file(5, 3)
+split_file('secret.txt', 7)
+recompose_file(7, 3)
+
